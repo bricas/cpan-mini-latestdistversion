@@ -8,6 +8,8 @@ use warnings;
 use Parse::CPAN::Packages::Fast;
 use CPAN::DistnameInfo;
 
+our $VERSION = '0.01';
+
 sub new {
     my $class = shift;
     my $self = $class->SUPER::new( @_ );
@@ -71,3 +73,58 @@ __END__
 =head1 NAME
 
 CPAN::Mini::LatestDistVersion - Create a CPAN mirror with only the latest version of each distribution
+
+=head1 SYNOPSIS
+
+    use CPAN::Mini::LatestDistVersion;
+    
+    CPAN::Mini::LatestDistVersion->update_mirror(
+      remote => "http://cpan.metacpan.org/",
+      local  => "/usr/share/mirrors/cpan",
+    );
+    
+    # or via minicpan
+    
+    minicpan -c CPAN::Mini::LatestDistVersion
+
+=head1 DESCRIPTION
+
+L<CPAN::Mini> uses the package index file (C<02packages.details.txt.gz>) to 
+grab the distribution tarballs that map to a module in the index. Sometimes a 
+newer version of a distribution is released which removes a module. Until it 
+is deleted via PAUSE, that old distribution will remain in the index. This 
+module attemps to filter those old distributions from the local mirror.
+
+=head1 METHODS
+
+=head2 new( %options )
+
+Overridden method which adds a sub to C<path_filters> which will reject any
+dists which do not match the latest version from the C<02packages.details.txt.gz> 
+index.
+
+=head2 mirror_indices( )
+
+Overridden method which parses C<02packages.details.txt.gz> and constructs 
+the list of the latest version of each distribution.
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<CPAN::Mini>
+
+=back
+
+=head1 AUTHOR
+
+Brian Cassidy E<lt>bricas@cpan.orgE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2013 by Brian Cassidy
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
+=cut
